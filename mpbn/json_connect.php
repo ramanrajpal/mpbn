@@ -35,14 +35,16 @@ select * from( select datatime,nodename,ifIndex,dense_RANK() OVER ( PARTITION BY
 		
 //}
 $result=sasql_query($connect,$query_string);
-//echo gettype($result);
- $reslt_set = sasql_fetch_array($result);
+
+
+ //$reslt_set = sasql_fetch_array($result);
  //print_r($reslt_set);
+
  //created object with nodes----> ports--->row_num as the heirarchy
  $obj_holder = array();
  while ($reslt_set = sasql_fetch_array($result))
  	{
- 		//print_r($reslt_set[0]);
+ 		//print_r($reslt_set);
  		$date_time = $reslt_set[0];
  		$obj_holder[$reslt_set[1]][$reslt_set[2]][$reslt_set[3]]["ifinoctets"] = $reslt_set[4];
  		$obj_holder[$reslt_set[1]][$reslt_set[2]][$reslt_set[3]]["ifhcinoctets"] = $reslt_set[5];
@@ -58,7 +60,8 @@ $obj_holder[$reslt_set[1]][$reslt_set[2]][$reslt_set[3]]["ifhighspeed"] = $reslt
 
  		//$obj_holder->{$reslt_set}[1]->{$reslt_set}[2]->{$reslt_set}[3]["ifhcinoctets"] = $reslt_set[5];
  	}
- 
+//print_r($obj_holder);
+//die;
  	$json_return = array();
  	foreach($json_input as $key => $val) {
  				//print_r();
@@ -106,7 +109,7 @@ $obj_holder[$reslt_set[1]][$reslt_set[2]][$reslt_set[3]]["ifhighspeed"] = $reslt
 							$utilization_in_x_hc = 0;
 				}
 				else{
-				$utilization_in_x_hc = ($utilization_in_hc_x_num*8*8*100)/($utilization_in_hc_x_den*1000000*1024*1024);
+				$utilization_in_x_hc = ($utilization_in_hc_x_num*8*8*100)/($utilization_in_hc_x_den*10000000*1024*1024*120);
 				}
 				//utilization_out_hc
 				$utilization_out_hc_x_num = ($obj_holder[$nodeval['name']][$portval]['1']['ifhcoutoctets'] - $obj_holder[$nodeval['name']][$portval]['2']['ifhcoutoctets']);
@@ -116,7 +119,7 @@ $obj_holder[$reslt_set[1]][$reslt_set[2]][$reslt_set[3]]["ifhighspeed"] = $reslt
 					$utilization_out_x_hc = 0;
 				}
 				else{
-				$utilization_out_x_hc = ($utilization_out_hc_x_num*8*8*100)/($utilization_out_hc_x_den*1000000*1024*1024);
+				$utilization_out_x_hc = ($utilization_out_hc_x_num*8*8*100)/($utilization_out_hc_x_den*10000000*1024*1024*120);
 				}
 				$utilization_in = max($utilization_in_x,$utilization_in_hc_x);
 				$utilization_out = max($utilization_out_x_hc,$utilization_out_x);
@@ -152,25 +155,26 @@ $obj_holder[$reslt_set[1]][$reslt_set[2]][$reslt_set[3]]["ifhighspeed"] = $reslt
 	//
 	//die;
 	}
+
 } else {
 	//print_r($json_input);
 	//die;
 			        $query_string = "
-select datatime,nodename,ifIndex,ifInOctets,ifHCInOctets,ifOutOctets,ifHCOutOctets,ifInErrors,ifOutErrors,ifInDiscards,ifOutDiscards,ifSpeed from dc.trig_mpbn_delta_values where nodename in ($node_list_fin) and ifindex in ($port_list_fin);";
-
-		
+select datatime,nodename,ifIndex,ifInOctets,ifHCInOctets,ifOutOctets,ifHCOutOctets,ifInErrors,ifOutErrors,ifInDiscards,ifOutDiscards,ifSpeed,ifHighspeed from dc.trig_mpbn_delta_values where nodename in ($node_list_fin) and ifindex in ($port_list_fin);";
+//print_r($query_string);
+//die;		
 
 
 //}
 $result=sasql_query($connect,$query_string);
 //echo gettype($result);
- $reslt_set = sasql_fetch_array($result);
+ //$reslt_set = sasql_fetch_array($result);
  //print_r($reslt_set);
  //created object with nodes----> ports--->row_num as the heirarchy
  $obj_holder = array();
  $json_return = array();
  while ($reslt_set = sasql_fetch_array($result))
-     {
+ 	    {
          //print_r($reslt_set[0]);
          //$date_time = $reslt_set[0];
 		 //
@@ -195,35 +199,64 @@ $result=sasql_query($connect,$query_string);
 		 if ($reslt_set[3] > $reslt_set[4]) {
 			if (is_array($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]) && array_key_exists('invalue',$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]])) {
 
-					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[3] - 0));
+					//array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[3] - 0));
+					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[3] - 0)*8/(120*1024*1024));
 
-					//just make copy into utilization as of now
 
-					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[3] - 0));
+							//just make copy into utilization as of now
+					
+					$utilization_inter = 0;
+					if ($reslt_set[11]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[3]-0)*8*8*100)/($reslt_set[11]*120*1024*1024);
+					}
+
+
+					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],$utilization_inter);
+				
 
 					} else {
 
-					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array(($reslt_set[3] - 0));
+					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array(($reslt_set[3] - 0)*8/(120*1024*1024));
 
+					$utilization_inter = 0;
+					if ($reslt_set[11]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[3]-0)*8*8*100)/($reslt_set[11]*120*1024*1024);
+					}
 					//make copy 
 
-					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array(($reslt_set[3] - 0));
-
+					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array($utilization_inter);
+					//$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],((($reslt_set[3] - 0)*8*8*100))/$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],((($reslt_set[12] - 0)*120*1024*1024));
 					}
 
 					} else {
 
 					 if (is_array($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]) && array_key_exists('invalue',$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]])) {
 
-					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[4] -0 ));
+					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[4] -0 )*8/(120*1024*1024));
 
-					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],($reslt_set[4] - 0));
+					$utilization_inter = 0;
+					if ($reslt_set[12]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[4]-0)*8*8*100)/($reslt_set[12]*1000000*120*1024*1024);
+					}
+					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'],$utilization_inter);
 
 					} else {
 
-					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array(($reslt_set[4] - 0));
+					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array(($reslt_set[4] - 0)*8/(120*1024*1024));
 
-					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array(($reslt_set[4] - 0));
+					$utilization_inter = 0;
+					if ($reslt_set[12]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[4]-0)*8*8*100)/($reslt_set[12]*1000000*120*1024*1024);
+					}
+					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['invalue']['data'] = array($utilization_inter);
 
 					}
 
@@ -239,19 +272,32 @@ $result=sasql_query($connect,$query_string);
 
 			if (is_array($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]) && array_key_exists('outvalue',$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]])) {
 
-					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($reslt_set[5] - 0));
+					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($reslt_set[5] - 0)*8/(1024*1024*120));
 
 					//make a copy
 
-					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($reslt_set[5] - 0));
+					$utilization_inter = 0;
+					if ($reslt_set[11]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[5]-0)*8*8*100)/($reslt_set[11]*120*1024*1024);
+					}
+
+					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],$utilization_inter);
 
 					} else {
 
-					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array(($reslt_set[5] - 0));
+					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array(($reslt_set[5] - 0)*8/(1024*1024*120));
 
 					//make copy
 
-					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array(($reslt_set[5]-0));
+					$utilization_inter = 0;
+					if ($reslt_set[11]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[5]-0)*8*8*100)/($reslt_set[11]*120*1024*1024);
+					}
+					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array($utilization_inter);
 
 					}
 
@@ -259,19 +305,31 @@ $result=sasql_query($connect,$query_string);
 
 					 if (is_array($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]) && array_key_exists('outvalue',$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]])) {
 
-					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($reslt_set[6]-0));
+					array_push($json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($reslt_set[6]-0)*8/(1024*1024*120));
 
 					//make copy
 
-					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($reslt_set[6]-0));
+					$utilization_inter = 0;
+					if ($reslt_set[12]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[6]-0)*8*8*100)/($reslt_set[12]*120*1024*1024*10000000);
+					}
+					array_push($json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'],($utilization_inter));
 
 					} else {
 
-					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array(($reslt_set[6]-0));
+					$json_return['traffic_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array(($reslt_set[6]-0)*8/(1024*1024*120));
 
 					//make copy
 
-					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array(($reslt_set[6]-0));
+					$utilization_inter = 0;
+					if ($reslt_set[12]==0){
+						$utilization_inter = 0;}
+					else {
+						$utilization_inter = (($reslt_set[6]-0)*8*8*100)/($reslt_set[12]*10000000*120*1024*1024);
+					}
+					$json_return['utilization_in'][$reslt_set[1]][$reslt_set[2]]['outvalue']['data'] = array($utilization_inter);
 
 					}
 
