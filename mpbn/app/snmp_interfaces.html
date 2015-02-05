@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html> <!-- Do not add ng-app here as we bootstrap AngularJS manually-->
+<head>
+<title>SNMP Interfaces</title>
+<meta charset="utf-8" />
+<style>
+
+.cpu{display:inline-block;width: 1000px; height:350px;margin-left:10px}
+.temp{display:inline-block;width: 300px; height:200px;margin-left:10px}
+
+#navBar {
+    position: fixed;
+    left: 5px;
+    top: 70px;
+    bottom: 0;
+    width: 180px;
+	font-family: "Lucida Sans Unicode";
+	font-size: 10px;
+}
+
+.content {
+margin-left: 110px;
+}
+
+
+
+
+}
+</style>
+</head>
+<body class="home-page" ng-controller="Snmp_interfaces">
+<div id="navBar" >
+
+
+<div class="content">
+		<highchart id="chart1" config="highchartsNG" ng-show="value1" class="cpu"></highchart>
+		
+        </div>
+
+
+</body>
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html> <!-- Do not add ng-app here as we bootstrap AngularJS manually-->
+<head>
+<title>My AngularJS App</title>
+<meta charset="utf-8" />
+</head>
+<body class="home-page" ng-controller="NameCtrlNew">
+ <select ng-model="mystate" ng-change="getdetails()" ng-options="items.name group by items.state for items in data">
+  </select>
+  <select ng-model="mystate2" ng-options="p.id for p in ndata">
+  <option value="">-- choose id --</option>
+  </select><br/>
+
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+</body>
+</html>
