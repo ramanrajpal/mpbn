@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html> <!-- Do not add ng-app here as we bootstrap AngularJS manually-->
+<head>
+<title>SNMP Node Getter</title>
+<meta charset="utf-8" />
+<style>
+#one-column-emphasis{font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size: 12px;margin: 45px;width: 480px;text-align: left;border-collapse: collapse;}
+#one-column-emphasis th{font-size: 14px;font-weight: normal;padding: 12px 15px;color: #039;}
+#one-column-emphasis td{padding: 10px 15px;color: #669;border-top: 1px solid #e8edff;}
+.oce-first{background: #d0dafd;border-right: 10px solid transparent;border-left: 10px solid transparent;}
+#one-column-emphasis tr:hover td{color: #339;background: #eff2ff;}
+h1{font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size: 25px;color: #669}
+body{font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size: 15px;color: #669}
+button {
+    color: #669;
+}
+select {
+    padding : 1px;
+	color:#669;
+}
+</style>
+
+</head>
+
+<body class="home-page" ng-controller="Snmp_Ctrl">
+<h1>
+SNMP OID Element utility for IF-ENTRY
+</h1>
+ Select the Node from the List <select ng-model="mystate" ng-change="getdetails()" ng-options="items.name group by items.state for items in data">
+ <option value="">-- choose node --</option>
+  </select>
+  Select Interface from the List <select ng-model="mystate2" ng-options="p.interfaces for p in ndata">
+  <option value="">-- choose interface --</option>
+  </select>
+  <button ng-click="getInterfacedetails()">
+  GetInterfaceDetails
+</button>
+<br>
+<table ng-show="snmpobject" id="one-column-emphasis" summary="OSS Group"><colgroup><col class="oce-first" /></colgroup><thead><tr><th scope="col">OID</th><th scope="col">Value</th></tr></thead>
+    <tbody ng:repeat="(key, value) in snmpobject">
+        <tr><td>{{key}}</td><td>{{value}}</td></tr>
+    </tbody>
+</table>
+<highchart id="highchartContainer" config="highchartsNG"></highchart>
+
+</body>
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+
+
+</html>

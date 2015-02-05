@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html> <!-- Do not add ng-app here as we bootstrap AngularJS manually-->
+<head>
+<title>SNMP Gauges</title>
+<meta charset="utf-8" />
+<style>
+
+.cpu{display:inline-block;width: 300px; height:250px;margin-left:10px}
+.temp{display:inline-block;width: 300px; height:200px;margin-left:10px}
+
+#navBar {
+    position: fixed;
+    left: 5px;
+    top: 70px;
+    bottom: 0;
+    width: 180px;
+	font-family: "Lucida Sans Unicode";
+	font-size: 10px;
+}
+
+.content {
+margin-left: 110px;
+}
+</style>
+</head>
+<body class="home-page" ng-controller="Snmp_dials">
+<div id="navBar" >
+<button ng-click="showAllNodeFilter()">Filter Nodes
+</button>
+<ul ng-show="showALLNodes">
+<li>Node1: <input type="checkbox" ng-model="value1" ></li>
+<li>Node2: <input type="checkbox" ng-model="value2" ></li>
+<li>Node3: <input type="checkbox" ng-model="value3" ></li>
+<li>Node4: <input type="checkbox" ng-model="value4" ></li>
+<li>Node5: <input type="checkbox" ng-model="value5"></li>
+<li>Node6: <input type="checkbox" ng-model="value6"></li>
+</ul>
+</div>
+<div class="content">
+		<highchart id="chart1" config="highchartsNG" ng-show="value1" class="cpu"></highchart>
+		<highchart id="highchartContainer" config="highchartsNGtemp" ng-show="value1" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG2" ng-show="value2" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp2" ng-show="value2" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG3" ng-show="value3" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp3" ng-show="value3" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG4" ng-show="value4" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp4" ng-show="value4" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG5" ng-show="value5" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp5" ng-show="value5" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG6" ng-show="value6" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp6" ng-show="value6" class="temp"></highchart>
+        </div>
+
+
+</body>
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+</html>

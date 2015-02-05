@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html> <!-- Do not add ng-app here as we bootstrap AngularJS manually-->
+<head>
+<link rel="stylesheet" href="C:\Project\Javascript\app\scripts\vendor\ui-common\css\ui-grid-unstable.css">
+<link rel="stylesheet" href="C:\Project\Javascript\app\scripts\vendor\bootstrap-3.2.0-dist\css\bootstrap-theme.css">
+<link rel="stylesheet" href="C:\Project\Javascript\app\scripts\vendor\bootstrap-3.2.0-dist\css\bootstrap.css">
+</head>
+<style>
+    .myGrid {
+    width: 1200px;
+    height: 300px;
+	border: 1px solid rgb(212,212,212);
+    }
+.major {
+  background-color: #E42217;
+  color: #E42217;
+}
+
+.minor {
+  background-color:black;
+  color: #8AFB17;
+}
+
+.ui-grid-cell-contents {
+    text-overflow: clip;
+    white-space: normal;
+}
+
+ </style>
+<script src="C:\Project\Javascript\app\scripts\vendor\ui-common\js\pdfMake.js"></script>
+<script src="C:\Project\Javascript\app\scripts\vendor\ui-common\js\vfs_fonts.js"></script>
+<body class="home-page" ng-controller="testGridCtrl" >
+
+
+ <div ui-grid="gridOptions" ui-grid-selection ui-grid-edit ui-grid-exporter ui-grid-move-columns ui-grid-pagination  class="myGrid">
+ <p>Current page: {{ gridApi2.pagination.getPage() }} of {{ gridApi2.pagination.getTotalPages() }}</p>
+ <button type="button" class="btn btn-success" ng-click="gridApi2.pagination.previousPage()">
+previous page
+</button>
+<button type="button" class="btn btn-success" ng-click="gridApi2.pagination.nextPage()">
+next page
+</button>
+<button type="button" class="btn btn-success" ng-click="update_alarmStatus()">Update</button>
+</div>
+
+</body>
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+
+
+	
+</html>

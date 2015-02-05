@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html> <!-- Do not add ng-app here as we bootstrap AngularJS manually-->
+<head>
+<link rel="stylesheet" href="scripts/vendor/bootstrap-3.2.0-dist/css/bootstrap.css">
+<link rel="stylesheet" href="scripts/vendor/bootstrap-3.2.0-dist/css/bootstrap-theme.css">
+<link rel="stylesheet" href="scripts/vendor/ui-common/css/ui-grid-unstable.css">
+</head>
+<style>
+.navbar-left{'background-color':#eeeeee;}
+.cpu{display:inline-block;width: 300px; height:250px;margin-left:10px}
+.temp{display:inline-block;width: 300px; height:200px;margin-left:10px}
+.boxmydiv1{
+  display: inline-block;
+  width: 400px;
+  height: 3000px;
+  margin: 1em;
+}
+   .myGrid {
+    width: 1200px;
+    height: 300px;
+	border: 1px solid rgb(212,212,212);
+    }
+.major {
+  background-color: #E42217;
+  color: #E42217;
+}
+
+.minor {
+  background-color:black;
+  color: #8AFB17;
+}
+
+.ui-grid-cell-contents {
+    text-overflow: clip;
+    white-space: normal;
+}
+ </style>
+<script src="scripts/vendor/ui-common/js/pdfMake.js"></script>
+<script src="scripts/vendor/ui-common/js/vfs_fonts.js"></script>
+<body class="home-page" >
+
+ <div class="container-fluid" ng-controller="alertAddCtrl">
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+
+    <div class="navbar-left">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="scripts/vendor/bootstrap-3.2.0-dist/images/eric.png">
+      </a>
+    </div>
+<div class="navbar-right">
+ <tabset type="pills">
+    <tab heading="Static title"> </tab>
+    <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+      {{tab.content}}
+    </tab>
+    <tab select="alertMe()">
+      <tab-heading>
+        <i class="glyphicon glyphicon-bell"></i> 
+		 <div class="btn-group" dropdown is-open="Alarmstatus.isopen" >
+		 <span class="dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+        Alert! <span class="caret"></span>
+      </span>
+      <ul class="dropdown-menu" role="menu" >
+        <li role="presentation" ><a href="#">View Alarms List</a></li>
+		<li ><a href="#">View Configured Alarms</a></li>
+		<li class="divider"></li>
+        <li ng-show="userAdmin"><a href="#">Create/Update Alarms</a></li>
+		
+      </ul>
+	  </div>
+      </tab-heading>
+    </tab>
+	<tab>
+     <tab-heading>
+		<i class="glyphicon glyphicon-stats"></i>
+      <div class="btn-group" dropdown is-open="Trendingstatus.isopen" >
+      <span class="dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+        Trending KPI <span class="caret"></span>
+      </span>
+      <ul class="dropdown-menu" role="menu" >
+        <li role="presentation" ><a href="#" ng-click ="cheeee('CPU Utilization')">CPU Utilization</a></li>
+		<li class="divider"></li>
+        <li><a href="#" ng-click ="cheeee('Port Utilization')">Port Utilization</a></li>
+		<li class="divider"></li>
+        <li><a href="#" ng-click ="cheeee('Temperature')">Temperature</a></li>
+      </ul>
+    </div>
+
+     </tab-heading>
+    </tab>
+  </tabset>
+  </div>
+  </nav>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <!--
+  <div class="jumbotron">
+  <h1>MPBN Solution</h1>
+  <p>SNMP Based</p>
+  
+</div>
+-->
+ <div class="col-sm-3">
+ <tabset vertical="true" type="pills">
+    <tab select="setshowIdentifier('Viewlist')">
+	<tab-heading>
+	View Alarms List
+	</tab-heading>
+	</tab>
+	    <tab select="setshowIdentifier('Alarmlist')">
+	<tab-heading>
+	View Configured Alarms
+	</tab-heading>
+	</tab>
+		<tab select="setshowIdentifier('Create')">
+	<tab-heading>
+	Create/Update Alarms
+	</tab-heading>
+	</tab>
+	<!--
+    <tab heading="View Configured Alarms"></tab>
+	<tab ng-show="userAdmin" heading="Create/Update Alarms"></tab>
+	-->
+  </tabset>
+ </div>
+ <div class="col-sm-9" ng-show="divtoShow.Create">
+    <form class="form-horizontal">
+		 <div class="form-group">
+			
+				<label class="col-sm-5 control-label">Select KPI to be added to Alert</label>
+					<div class='col-sm-4'>
+					<select class="form-control" ng-model="kpiSelected" ng-options="kpi for kpi in availabeKPI">
+					 <option value="">-- choose KPI --</option>
+					</select>
+			</div>
+			</div>
+			<div class="form-group">
+			
+				<label class="col-sm-5 control-label">Choose Nodes to be added to </label>
+					<div class='col-sm-4'>
+					<select multiple class="form-control" ng-model="NodeSelected" ng-options="node for node in NodeList">
+					</select>
+			</div>
+		</div>
+		<div class="form-group" ng-show="kpiType[kpiSelected]" ng-repeat="node in NodeSelected">
+			
+				<label class="col-sm-5 control-label">Choose Ports to be added to {{node}} </label>
+					<div class='col-sm-4'>
+					<select multiple class="form-control" ng-model="portSelected[node]" ng-options="port for port in portList[node]">
+					</select>
+					<div>
+        Selected Ports: {{portSelected[node]}}
+    </div>
+					
+			</div>
+		</div>
+		<div class="form-group">
+
+
+	<label class="col-sm-5 control-label ">Minimum Severity </label>
+	<div class='col-sm-4'>
+      <input type="text" class="form-control" ng-model="threshold1" placeholder="Minimum Threshold">
+	  </div>
+	</div>
+		
+	<div class="form-group">
+	<label class="col-sm-5 control-label ">Info Severity </label>
+	  <div class='col-sm-4'>
+      <input type="text" class="form-control" ng-model="threshold2" placeholder="Info THreshold">
+	  </div>
+	  </div>
+	  <div class="form-group">
+	<label class="col-sm-5 control-label ">Warn Severity </label>
+	  <div class='col-sm-4'>
+      <input type="text" class="form-control" ng-model="threshold3" placeholder="Warn Threshold">
+	  </div>
+	  </div>
+	   <div class="form-group">
+		<label class="col-sm-5 control-label ">Major Severity </label>
+	  <div class='col-sm-4'>
+      <input type="text" class="form-control" ng-model="threshold4" placeholder="Major Threshold">
+	  </div>
+	</div> 
+	<!--
+			 <div class="form-group">
+			
+				<label class="col-sm-5 control-label">Select Severity</label>
+					<div class='col-sm-4'>
+					<select class="form-control" ng-model="chosenSeverity" ng-options="sev for sev in severityList">
+					 <option value="">-- choose Severity --</option>
+					</select>
+			</div>
+			</div>
+			-->
+			<div class="form-group">
+		<label class="col-sm-5 control-label ">Save Configuration </label>
+		<div class='col-sm-4'>
+	<button type="button" class="btn btn-success" ng-click="saveAlertConfiguration()">Save</button>
+	<button type="button" class="btn btn-success" ng-click="cleanupselections()">Clear</button>
+	</div>
+	</div>
+    </form>
+</div>
+ <div class="col-sm-9" ng-show="divtoShow.Viewlist" ng-controller="testGridCtrl"> 
+ 
+ <div ui-grid="gridOptions" ui-grid-selection ui-grid-edit ui-grid-exporter ui-grid-move-columns ui-grid-pagination  class="myGrid">
+ <p>Current page: {{ gridApi2.pagination.getPage() }} of {{ gridApi2.pagination.getTotalPages() }}</p>
+ <button type="button" class="btn btn-success" ng-click="gridApi2.pagination.previousPage()">
+previous page
+</button>
+<button type="button" class="btn btn-success" ng-click="gridApi2.pagination.nextPage()">
+next page
+</button>
+<button type="button" class="btn btn-success" ng-click="update_alarmStatus()">Update</button>
+</div>
+</div>
+
+</body>
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+</html>

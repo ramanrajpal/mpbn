@@ -1,0 +1,424 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8"/>
+<link rel="stylesheet" href="scripts/vendor/bootstrap-3.2.0-dist/css/bootstrap.css">
+<link rel="stylesheet" href="scripts/vendor/bootstrap-3.2.0-dist/css/bootstrap-theme.css">
+</head>
+<style>
+#one-column-emphasis{font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size: 12px;margin: 45px;width: 480px;text-align: left;border-collapse: collapse;}
+#one-column-emphasis th{font-size: 14px;font-weight: normal;padding: 12px 15px;color: #039;}
+#one-column-emphasis td{padding: 10px 15px;color: #669;border-top: 1px solid #e8edff;}
+.oce-first{background: #d0dafd;border-right: 10px solid transparent;border-left: 10px solid transparent;}
+#one-column-emphasis tr:hover td{color: #339;background: #eff2ff;}
+.navbar-left{'background-color':#eeeeee;}
+.cpu{display:inline-block;width: 300px; height:250px;margin-left:10px}
+.temp{display:inline-block;width: 300px; height:200px;margin-left:10px}
+.boxmydiv1{
+  display: inline-block;
+  width: 400px;
+  height: 3000px;
+  margin: 1em;
+}
+
+ </style>
+
+<body class="home-page" >
+
+ <div class="container-fluid" ng-controller="CCCVCVC">
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+
+    <div class="navbar-left">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="scripts/vendor/bootstrap-3.2.0-dist/images/eric.png">
+      </a>
+    </div>
+<div class="navbar-right">
+ <tabset type="pills">
+    <tab heading="Static title"> </tab>
+    <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
+      {{tab.content}}
+    </tab>
+    <tab select="alertMe()">
+      <tab-heading>
+        <i class="glyphicon glyphicon-bell"></i> Alert!
+      </tab-heading>
+    </tab>
+	<tab>
+     <tab-heading>
+		<i class="glyphicon glyphicon-stats"></i>
+      <div class="btn-group" dropdown is-open="status.isopen" >
+      <span class="dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+        Trending KPI <span class="caret"></span>
+      </span>
+      <ul class="dropdown-menu" role="menu" >
+        <li role="presentation" ><a href="#" ng-click ="cheeee('CPU Utilization')">CPU Utilization</a></li>
+		<li class="divider"></li>
+        <li><a href="#" ng-click ="cheeee('Port Utilization')">Port Utilization</a></li>
+		<li class="divider"></li>
+        <li><a href="#" ng-click ="cheeee('Temperature')">Temperature</a></li>
+      </ul>
+    </div>
+
+     </tab-heading>
+    </tab>
+  </tabset>
+  </div>
+  </nav>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <!--
+  <div class="jumbotron">
+  <h1>MPBN Solution</h1>
+  <p>SNMP Based</p>
+  
+</div>
+-->
+ <div class="row">
+ <div class="col-sm-3">
+ <div collapse="isCollapsed">
+		<accordion close-others="oneAtATime">
+		 <accordion-group is-open="accordian.kpi">
+<accordion-heading>Monitor kpi
+<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordian.kpi, 'glyphicon-chevron-right': !accordian.kpi}"></i>
+ </accordion-heading>
+		<span class="label label-default">Select KPI</span>
+		<div class="btn-group" dropdown>
+      <button type="button" class="btn btn-danger"><span ng-bind="textForLeftNav"></span></button>
+      <button type="button" class="btn btn-danger dropdown-toggle" dropdown-toggle>
+        <span class="caret"></span>
+        <span class="sr-only"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li class="list-group-item" role = "presentation" ng-click="updateLeftNav('CPU Utilization')" ng-show="gaugeCategory">CPU Utilization</li>
+        <li class="list-group-item" ng-click="updateLeftNav('Port Utilization')" ng-show="lineChartCategory">Port Utilization</li>
+        <li class="list-group-item" ng-click="updateLeftNav('Temperature')" ng-show="gaugeCategory">Temperature</li>
+		<li class="list-group-item" ng-click="updateLeftNav('System Uptime')" ng-show="stackedChartsCategory">System Uptime</li>
+		<li class="list-group-item" ng-click="updateLeftNav('Memory Utilization')" ng-show="stackedChartsCategory">Memory Utilization</li>
+		<li class="list-group-item" ng-click="updateLeftNav('Session Utilization')" ng-show="stackedChartsCategory">Session Utilization</li>
+		<li class="list-group-item" ng-click="updateLeftNav('Protocol Utilization')" ng-show="stackedChartsCategory">Protocol Utilization</li>
+      </ul>  
+	  <hr>
+	
+    </div>
+    
+	<hr>
+
+	 </accordion-group>
+	 <accordion-group is-open="accordian.nodes">
+<accordion-heading>Monitor Nodes
+<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordian.nodes, 'glyphicon-chevron-right': !accordian.nodes}"></i>
+ </accordion-heading>
+   
+	<h5 class=text-left><span class="label label-default">Select Node</span></h5>
+
+	<div class="btn-toolbar" role="toolbar" style="height: 100px;overflow-y: auto">
+		<div ng-repeat="(nodeitem, flag) in checkModel">
+		
+		<label class="btn btn-primary" ng-model="checkModel[nodeitem]" btn-checkbox>{{nodeitem}} <span ng-class="(checkModel[nodeitem])? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+		</div>
+		<!--
+		
+        <label class="btn btn-primary" ng-model="checkModel.Node1" btn-checkbox>Node1 <span ng-class="(checkModel.Node1)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+	
+        <label class="btn btn-primary" ng-model="checkModel.Node2" btn-checkbox>Node2 <span ng-class="(checkModel.Node2)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+	
+        <label class="btn btn-primary" ng-model="checkModel.Node3" btn-checkbox>Node3 <span ng-class="(checkModel.Node3)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+		
+		<label class="btn btn-primary" ng-model="checkModel.Node4" btn-checkbox>Node4 <span ng-class="(checkModel.Node4)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+		
+		<label class="btn btn-primary" ng-model="checkModel.Node5" btn-checkbox>Node5 <span ng-class="(checkModel.Node5)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+		
+		
+		<label class="btn btn-primary" ng-model="checkModel.Node6" btn-checkbox>Node6 <span ng-class="(checkModel.Node6)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+		<label class="btn btn-primary" ng-model="checkModel.Node7" btn-checkbox>Node7 <span ng-class="(checkModel.Node7)? 'glyphicon glyphicon-ok': 'glyphicon glyphicon-remove'" aria-hidden="true"></span></label>
+		-->
+    </div>
+	 </accordion-group>
+	<!--
+	special accordian for the port utilization KPI
+-->	
+ <accordion-group is-open="accordian.ports" ng-show="ports_utilization" >
+ 
+<accordion-heading>Monitor Ports
+<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordian.nodes, 'glyphicon-chevron-right': !accordian.nodes}"></i>
+ </accordion-heading>
+ <h5 class=text-left><span class="label label-default">Select Port</span></h5>
+ <!--
+ <div class="btn-toolbar" role="toolbar" style="height: 100px;overflow-y: auto;">
+ 
+-->
+ <div class="btn-group" dropdown ng-repeat="(nodeavailable, enabledNodesif) in checkModel" ng-show="enabledNodesif" >
+
+ <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle ng-disabled="disabled" >
+        {{nodeavailable}} <span class="caret"></span>
+      </button>
+
+	  <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="(portsavailable,portselected) in portList[nodeavailable]" class="list-group-item" ng-click="$event.stopPropagation()" ng-style="backgroundcolorports[nodeavailable][portsavailable]">{{portsavailable}}  <input type="checkbox" ng-model="portList[nodeavailable][portsavailable]" ng-change="setMultipleSelectBackground(nodeavailable,portsavailable,portList[nodeavailable][portsavailable])"></li>
+      </ul>
+	
+</div>
+
+ </accordion-group>
+
+	<accordion-group is-open="accordian.time">
+<accordion-heading>Monitor Time Since
+<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordian.time, 'glyphicon-chevron-right': !accordian.time}"></i>
+ </accordion-heading>
+	<h5 class=text-left><span class="label label-default">Select Time</span></h5>
+	<div>
+	 <timepicker ng-model="mytime" ng-change="changed()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+
+  <pre class="alert alert-info">Time is: {{mytime | date:'shortTime' }}</pre>
+
+ 
+	
+  <hr>
+
+  <button class="btn btn-info" ng-click="toggleMode()">12H / 24H</button>
+  <button class="btn btn-danger" ng-click="clear()">Clear</button>
+
+</div>
+</accordion-group>
+<accordion-group is-open="accordian.trending">
+<accordion-heading>Begin Trending
+<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': accordian.trending, 'glyphicon-chevron-right': !accordian.trending}"></i>
+ </accordion-heading>
+<h5 class=text-left><span class="label label-default">Analysis</span></h5>
+<div class="btn-toolbar" role="toolbar">
+		
+        <label class="btn btn-primary" ng-click=hidemynavleft()>Start Trending <span class='glyphicon glyphicon-chevron-right'" aria-hidden="true"></span></label>
+		</div>
+		</accordion-group>
+		
+		</accordion>
+	</div>
+
+
+</div>
+<div ng-show="default_home" ng-class="(isCollapsed)? 'col-sm-12': 'col-sm-9'">
+<div class="row">
+ <!--<div class="col-sm-6 col-md-4">
+    <div class="thumbnail">
+
+    <carousel interval="3000">
+      <slide ng-repeat="slide in slides" active="slide.active">
+        <img ng-src="{{slide.image}}" style="margin:auto;">
+        <div class="carousel-caption">
+        Charts</div>
+      </slide>
+    </carousel>
+	 </div>
+	  </div>
+	  -->
+	  <div class="col-sm-6 col-md-4">
+	  <div class="thumbnail">
+	<img src="scripts/vendor/bootstrap-3.2.0-dist/images/im2.png" alt="">
+      <div class="caption">
+	  <h3>Stacked Charts</h3>
+	  <p>Analyse KPI like System Uptime</p>
+	  <p><div class="btn btn-success" role="button" ng-click="enableOnlyStackCharts()">Stacked Charts</div> 
+ 
+  </div>
+  </div>
+  </div>
+   <div class="col-sm-6 col-md-4">
+	  <div class="thumbnail">
+	<img src="scripts/vendor/bootstrap-3.2.0-dist/images/im11.png" alt="">
+      <div class="caption">
+	  <h3>Line Charts</h3>
+	  <p>Analyse KPI like Port Utilization</p>
+	  <p><div class="btn btn-success" role="button" ng-click="enableOnlylineChart()">Line Charts</div> 
+ 
+  </div>
+  </div>
+  </div>
+   <div class="col-sm-6 col-md-4">
+   <div class="thumbnail">
+	<img src="scripts/vendor/bootstrap-3.2.0-dist/images/g4.png" alt="">
+      <div class="caption">
+	  <h3>Gauges</h3>
+	  <p>Display KPI like CPU Utilization and Temperature</p>
+		<p><div class="btn btn-success" role="button" ng-click="enableOnlygaugeCharts()">Gauges</div> 
+ 
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <hr>
+  </div>
+<!--
+THis is the carousal effect on the page
+-->
+
+<div ng-show="default_home">
+<div class="row">
+
+<div ng-class="(isCollapsed)? 'col-sm-9 col-md-8 pull-right': 'col-sm-4 col-md-6 pull-right'">
+	<carousel interval="3000">
+      <slide ng-repeat="slide in slides" active="slide.active">
+        <img ng-src="{{slide.image}}" style="margin:auto;">
+        <div class="carousel-caption">
+        Charts</div>
+      </slide>
+    </carousel>
+	 </div>
+	 </div>
+	  </div>
+
+<div ng-class="(isCollapsed)? 'col-sm-12': 'col-sm-9'" ng-show="!default_home">
+<!--
+new changes
+-->
+
+<div class="container-fluid">
+<div class="boxmydiv" ng-repeat = "(node,portcaptured) in trace.Port_Utilization" ng-show="displaychecker.Port_Utilization">
+	
+	<div class="boxmydiv" ng-repeat = "port in trace.Port_Utilization[node]">
+			<h3>Trends for node : {{node}} and port : {{port}}</h3>
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.traffic_in[node][port])">Toggle collapse</button>
+			<div collapse={{config_highchart.traffic_in[node][port]}} style={ margin-bottom: 2cm;}>
+			<highchart id="chart1" config="config_charter.traffic_in[config_highchart.traffic_in[node][port]]" ></highchart>
+			</div>
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.utilization_in[node][port])">Toggle collapse</button>
+			<div collapse={{config_highchart.utilization_in[node][port]}}>
+			<highchart id="chart1" config="config_charter.utilization_in[config_highchart.utilization_in[node][port]]" ></highchart>
+			</div>
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.error_in[node][port])">Toggle collapse</button>
+			<div collapse={{config_highchart.error_in[node][port]}}>
+			<highchart id="chart1" config="config_charter.error_in[config_highchart.error_in[node][port]]" ></highchart>
+			</div>
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.discard_in[node][port])">Toggle collapse</button>
+			<div collapse={{config_highchart.discard_in[node][port]}}>
+			<highchart id="chart1" config="config_charter.discard_in[config_highchart.discard_in[node][port]]" ></highchart>
+			</div>
+			
+
+	</div>
+	
+</div>
+<div class="boxmydiv" ng-repeat = "node in trace.CPU_Utilization" ng-show="displaychecker.CPU_Utilization">
+			<h3>Gauges for node : {{node}} for CPU/Temp Utilization</h3>
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.cpu_util[node])">Toggle collapse</button>
+			<div collapse={{config_highchart.cpu_util[node]}}>
+			
+			
+			<highchart id="chart1" config="config_charter.cpu_util[config_highchart.cpu_util[node]]" class="cpu" ></highchart>
+		
+			
+			<highchart id="chart1" config="config_charter.temp_util[config_highchart.temp_util[node]]" class="temp"></highchart>
+			</div>
+			</div>
+<div class="boxmydiv" ng-repeat = "node in trace.System_Uptime" ng-show="displaychecker.System_Uptime">
+	
+			<h3>Gauges for node : {{node}} for System Uptime</h3>
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.system_uptime[node])">Toggle collapse</button>
+			<div collapse={{config_highchart.system_uptime[node]}}>
+			<highchart id="chart1" config="config_charter.system_uptime[config_highchart.system_uptime[node]]"></highchart>
+			</div>
+		</div>
+<div class="boxmydiv" ng-repeat = "node in trace.Memory_Utilization" ng-show="displaychecker.Memory_Utilization">
+		<h3>Gauges for node : {{node}} for Memory Utilization</h3>
+
+			<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.memory_util[node])">Toggle collapse</button>
+
+			<div collapse={{config_highchart.memory_util[node]}}>
+
+			<highchart id="chart1" config="config_charter.memory_util[config_highchart.memory_util[node]]"></highchart>
+
+			</div>
+
+		</div>	
+<div class="boxmydiv" ng-repeat = "node in trace.Session_Utilization" ng-show="displaychecker.Session_Utilization">
+	<h3>Gauges for node : {{node}} for Session Utilization</h3>
+	<button class="btn btn-default" ng-click="hidechartfromview(config_highchart.session_util[node])">Toggle collapse</button>
+	<div collapse={{config_highchart.session_util[node]}}>
+		<highchart id="chart1" config="config_charter.session_util[config_highchart.session_util[node]]"></highchart>
+	</div>
+</div>
+<div ng-show="displaychecker.Protocol_Utilization">
+	<div class="table-responsive"> 
+	<h3>MPLS VPN Protocol Utilization</h3>         
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>NodeName</th>
+            <th>DataTime</th>
+			<th>ID</th>
+			<th>Description</th>
+			<th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr ng:repeat="rowarray in protocol_utilization.mplv3" ng-class="config_status.mplv3.status_color[rowarray.status]">
+        <td>{{rowarray.nodename}}</td>
+        <td>{{rowarray.datatime}}</td>
+        <td>{{rowarray.id}}</td>
+        <td>{{rowarray.desc}}</td>
+        <td>{{config_status.mplv3.status_text[rowarray.status]}}</td>
+    </tr>
+    </tbody>
+</table>
+	</div>
+	<div class="table-responsive"> 
+	<h3>BGP Protocol Utilization</h3>         
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>NodeName</th>
+            <th>DataTime</th>
+			<th>Remote Address</th>
+			<th>Local Address</th>
+			<th>Identifier</th>
+			<th>Port</th>
+			<th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    <tr ng:repeat="rowarray in protocol_utilization.bgp" ng-class="config_status.bgp.status_color[rowarray.Status]">
+        <td>{{rowarray.nodename}}</td>
+        <td>{{rowarray.datatime}}</td>
+        <td>{{rowarray["Remote Address"]}}</td>
+        <td>{{rowarray["Local Address"]}}</td>
+        <td>{{rowarray.Identifier}}</td>
+        <td>{{rowarray.Port}}</td>
+        <td>{{config_status.bgp.status_text[rowarray.Status]}}</td>
+    </tr>
+    </tbody>
+</table>
+	</div>
+</div>
+		</div>
+
+<!--
+end new changes
+-->
+<!--
+  <div class="container-fluid" ng-controller="Snmp_dials">
+		<highchart id="chart1" config="highchartsNG" ng-show="value1" class="cpu"></highchart>
+		<highchart id="highchartContainer" config="highchartsNGtemp" ng-show="value1" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG" ng-show="value2" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp2" ng-show="value2" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG" ng-show="value3" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp3" ng-show="value3" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG" ng-show="value4" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp4" ng-show="value4" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG" ng-show="value5" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp5" ng-show="value5" class="temp"></highchart>
+			<highchart id="highchartContainer2" config="highchartsNG" ng-show="value6" class="cpu"></highchart>
+			<highchart id="highchartContainer" config="highchartsNGtemp6" ng-show="value6" class="temp"></highchart>
+        </div>
+-->
+</div>
+</div>
+</div>
+</body>
+<script data-main="scripts/main" src="scripts/vendor/require.js"></script>
+</html>
