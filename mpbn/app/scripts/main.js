@@ -18,7 +18,8 @@ angularCookie:'vendor/angular-cookies.min',
 'ui.grid':'vendor/ui-grid-unstable',
 //'ui.grid':'vendor/ui-grid.min',
 'angular-animate':'vendor/angular-animate.min',
-'angular-touch':'vendor/angular-touch.min'
+'angular-touch':'vendor/angular-touch.min',
+exporting:'vendor/exporting',
 },
 shim: {
 'twitter/js/bootstrap': {
@@ -62,6 +63,10 @@ angularCookie: { deps:['angular'] },
 'ui.grid': { deps:['angular','jquery'] },
 'angular-animate': { deps:['angular'] },
 'angular-touch': { deps:['angular','jquery'] },
+//addition on 22 Jan1015
+exporting: {           //this module for high-chart downloads
+            deps: ['jquery','highcharts']
+         },
 }
 });
 require([
@@ -107,5 +112,6 @@ require([
 'controllers/alertAddCtrl',
 'controllers/testGridCtrl',
 'controllers/mainMonitoringCtrl',
+'controllers/homeMonitorCtrl',
 //'controllers/TestCtrl'
 ]);

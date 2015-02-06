@@ -22,8 +22,8 @@ if(@$_SESSION['smartSessionCheck']!=0){
 	}
 }
 $host='localhost';
-$account='root';
-$dbpassword='root';
+$account='ericsson';
+$dbpassword='ericsson';
 $database='db_smart';
 $connect = mysqli_connect($host,$account,$dbpassword,$database) or die("Cannot connect to the database");
 function admin_security_check(){

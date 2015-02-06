@@ -2,11 +2,11 @@ define(['controllers/controllers'], function(controllers) {
 controllers.controller('testGridCtrl',['$scope', '$cookies', 'uiGridConstants','alertViewDetails', 'updateAlertDetails', function($scope,$cookies,uiGridConstants,alertViewDetails,updateAlertDetails) {
 console.log("loading $$$$$$$$$$$$$$$ contoller-------------------");
 //get the details from the DB
-/*
+
 alertViewDetails.getAllAlerts().then(function (response) {
 $scope.myData = response;
 });
-*/
+/*
 var obj = {
 ID:323233,
 Severity:"Major",
@@ -25,12 +25,31 @@ NodeName:"zmpd02",
 "Alarm Count": 3,
 "Alarm Status": "Active"
 };
-$scope.myData = [obj,obj1,obj];
+var obj2 = {
+ID:323233,
+Severity:"Info",
+NodeName:"zmpd02",
+"Alarm Description":"Hello World I am here as an alert to check upon the regular lives how they look when they are mundane",
+"Alarm IN Time": "2014-01-14 23:11:33",
+"Alarm Count": 3,
+"Alarm Status": "Active"
+};
+var obj3 = {
+ID:323233,
+Severity:"Warning",
+NodeName:"zmpd02",
+"Alarm Description":"Hello World I am here as an alert to check upon the regular lives how they look when they are mundane",
+"Alarm IN Time": "2014-01-14 23:11:33",
+"Alarm Count": 3,
+"Alarm Status": "Active"
+};
+$scope.myData = [obj,obj1,obj2,obj,obj3,obj1];
+*/
 //$scope.myData = response;
 // $scope.mySelections = [];
 //$scope.gridOptions = { data: 'myData' };
 //$scope.gridOptions.data = myData;
-var rowtpl='<div ng-class="{\'minor\':row.entity.Severity==\'Minor\', \'major\':row.entity.Severity==\'Major\' }"><div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
+var rowtpl='<div ng-class="{\'minor\':row.entity.Severity==\'Minor\', \'major\':row.entity.Severity==\'Major\',\'info\':row.entity.Severity==\'Info\',\'warning\':row.entity.Severity==\'Warning\' }"><div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name" class="ui-grid-cell" ng-class="{ \'ui-grid-row-header-cell\': col.isRowHeader }" ui-grid-cell></div></div>';
 $scope.choices = ["Active","Acknowledge"];
 $scope.gridOptions = {
 data: 'myData',
@@ -62,7 +81,7 @@ enableGridMenu: true,
 rowTemplate:rowtpl,
 enablePaginationControls: false,
 cellEditableCondition:true,
-paginationPageSize: 3,
+paginationPageSize: 5,
 columnDefs: [
 // default
 { field: 'ID', enableFiltering: false,
@@ -124,7 +143,7 @@ sortFn: function (aDate, bDate) {
            }
 		   }
 },
-{ field: 'Alarm Count',
+{ field: 'Count',
 width: '10%',
 enableFiltering: false,
 /*

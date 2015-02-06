@@ -243,6 +243,8 @@ $scope.backgroundcolorports[node][port] = {
 	};
 	 $scope.checkModel= nodePortConfigFile.checkModel;
  $scope.portList= nodePortConfigFile.portList;
+  $scope.portAliases= nodePortConfigFile.portAliases;
+  $scope.portDesc= nodePortConfigFile.portDesc;
   //timepicker
   $scope.mytime = new Date();
  $scope.hstep = 1;
@@ -256,7 +258,8 @@ $scope.backgroundcolorports[node][port] = {
   $scope.toggleMode = function() {
     $scope.ismeridian = ! $scope.ismeridian;
   };
-
+ $scope.kpiaccord = false; 
+ $scope.nodeaccord = false;
   
   
 
@@ -268,6 +271,8 @@ $scope.backgroundcolorports[node][port] = {
   $scope.hidemynavleft = function() {
   $scope.isCollapsed = true;
   $scope.default_home = false;
+  $scope.kpiaccord = false; 
+	$scope.nodeaccord = false;
   //var t = $scope.portList.Node1 + '.1';
   /*
   for (var nodes in $scope.portList) {
@@ -345,20 +350,28 @@ $scope.backgroundcolorports[node][port] = {
 							text_type = "Mbps";
 							}
 						if (subkpi_list[kpi] == "utilization_in") {
-							text_type = "Utilization";
+							text_type = "Percent";
 							}
 						$scope.config_charter[subkpi_list[kpi]][unique_identifier] = {
 						
+																		options: {
 																		chart: {
-																		type: 'bar'
+																		          backgroundColor: {
+																							linearGradient: [0, 0, 500, 500],
+																							stops: [
+																								[0, 'rgb(255, 255, 255)'],
+																								[1, 'rgb(255,215,0)']
+																							]
+																						},
+																					type: 'line'
 																		},
-
+																	},
 																		title: {
-																		text: subkpi_list[kpi]
+																		text: subkpi_list[kpi].split("_")[0].toUpperCase()
 																		},
 
 																		subtitle: {
-																			text: unique_identifier
+																			text: ''
 																		},
 
 																		xAxis: {
@@ -372,7 +385,7 @@ $scope.backgroundcolorports[node][port] = {
 																				//y: -3
 																			},
 																		//categories: [1418894316000,1418894376000,1418894436000,1418894496000,1418894556000,1418894616000,1418894676000],
-																		categories: [1418894316000],
+																		categories: [],
 																		labels : {
 																		formatter: function() {
 																			//var myDate = new Date();
@@ -381,7 +394,8 @@ $scope.backgroundcolorports[node][port] = {
 																			console.log("inside the formatter the value is ::::" + this.value);
 																				return Highcharts.dateFormat('%H:%M',this.value);
 																			//console.log("inside the highchart" + this.value);
-																		}
+																		},
+																		rotation: -90,
 																	},    
 																	},
 
@@ -435,22 +449,22 @@ $scope.backgroundcolorports[node][port] = {
 																	},
 
 																	series: [{
-																		name: subkpi_list[kpi] + "in",
+																		name: "in",
 																		//data: [[1330300800000,20], [1330300800000,37], [1330300800000,26], [1330300800000,8], [1330300800000,7]],
-																		data:[20],
+																		data:[],
 																		//data:[65],
 																		lineWidth: 2,
-																		color:'red',
+																		color:'#F87217',
 																		marker: {
 																			radius: 4
 																		}
 																	}, {
-																		name: subkpi_list[kpi] + "out",
+																		name: "out",
 																		//data: [9, 19, 11,22, 100],
-																		data:[20],
+																		data:[],
 																		//data:[85],
 																		lineWidth: 2,
-																		color:'green',
+																		color:'#7D0541',
 																		marker: {
 																			radius: 4
 																		}
@@ -477,7 +491,11 @@ $scope.backgroundcolorports[node][port] = {
 																	}
 																	*/
 																	
-																	]
+																	],
+																	exporting: {
+																			url: 'http://localhost:80/mpbn/exporting_server/index.php'
+																	},
+																	
 																};
 														}
 
@@ -521,13 +539,16 @@ $scope.backgroundcolorports[node][port] = {
 																	options: {
 																		chart: {
 																			type: 'gauge',
-																			plotBackgroundColor: null,
+																			plotBackgroundColor: '#E3E4FA',	
+																			backgroundColor:'#E3E4FA',
 																			plotBackgroundImage: null,
-																			plotBorderWidth: 0,
-																			plotShadow: false
+																			
+																			//plotBorderWidth: 2,
+																			plotShadow: true,
+																			plotBorderColor:'#98AFC7',
 																		},
 																		title: {
-																			text: nodex
+																			text: 'CPU'
 																		},
 																		pane: {
 																			startAngle: -150,
@@ -596,10 +617,13 @@ $scope.backgroundcolorports[node][port] = {
 																			color: '#DF5353' // red
 																		}]        
 																	},
-																
+																	exporting: {
+																			url: 'http://localhost:80/mpbn/exporting_server/index.php'
+																	},
+																	
 																	series: [{
 																		name: 'Cpu-usage',
-																		data: [50],
+																		data: [],
 																		tooltip: {
 																			valueSuffix: ' %'
 																		}
@@ -608,7 +632,12 @@ $scope.backgroundcolorports[node][port] = {
 						$scope.config_charter["temp_util"][unique_identifier_temp] = {
 																	options: {
 																		chart: {
-																			type: 'solidgauge'
+																			type: 'solidgauge',
+																			plotBackgroundColor: '#E3E4FA',
+																			backgroundColor:'#E3E4FA',
+																			//plotBorderWidth: 2,
+																			plotShadow: true,
+																			plotBorderColor:'#98AFC7',
 																		},
 																		pane: {
 																			center: ['50%', '85%'],
@@ -631,7 +660,7 @@ $scope.backgroundcolorports[node][port] = {
 																		}
 																	},
 																	series: [{
-																		data: [16],
+																		data: [],
 																		dataLabels: {
 																			format: '<div style="text-align:center"><span style="font-size:12px;color:black">{y}</span><br/>' + 
 																				'<span style="font-size:8px;color:silver">Celsius</span></div>'
@@ -643,7 +672,7 @@ $scope.backgroundcolorports[node][port] = {
 																	},
 																	yAxis: {
 																		currentMin: 0,
-																		currentMax: 200,
+																		currentMax: 160,
 																		title: {
 																			y: 140
 																		},      
@@ -696,9 +725,15 @@ $scope.backgroundcolorports[node][port] = {
 
 
 																		chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: 1,//null,
-            plotShadow: false
+																            plotBackgroundColor: null,
+																            plotBorderWidth: 1,//null,
+																            //plotShadow: false,
+																            plotBackgroundColor: '#E3E4FA',	
+																			backgroundColor:'#E3E4FA',
+																			plotBackgroundImage: null,
+																			
+																			//plotBorderWidth: 2,
+																			plotShadow: true,
         },
         title: {
             text: 'Disk/Space Percentage'
@@ -896,12 +931,19 @@ if (kpi_selected == "Session Utilization") {
 
 						
 
+																		options: {
 																		chart: {
-
-																		type: 'area'
-
+																		          backgroundColor: {
+																							linearGradient: [0, 0, 500, 500],
+																							stops: [
+																								[0, 'rgb(255, 255, 255)'],
+																								[1, 'rgb(255,215,0)']
+																							]
+																						},
+																					type: 'area',
+																					width: 1200,
 																		},
-
+																	},
 
 
 																		title: {
@@ -942,7 +984,7 @@ if (kpi_selected == "Session Utilization") {
 
 																		//categories: [1418894316000,1418894376000,1418894436000,1418894496000,1418894556000,1418894616000,1418894676000],
 
-																		categories: [1418894316000],
+																		categories: [],
 
 																		labels : {
 
@@ -970,7 +1012,7 @@ if (kpi_selected == "Session Utilization") {
 
 																		title: {
 
-																			text: text_type
+																			text: 'Session (%)'
 
 																		},
 
@@ -998,7 +1040,7 @@ if (kpi_selected == "Session Utilization") {
 
 																		title: {
 
-																			text: text_type
+																			text: 'Session (%)'
 
 																		},
 
@@ -1051,6 +1093,7 @@ if (kpi_selected == "Session Utilization") {
 																		series: {
 
 																			cursor: 'pointer',
+																			fillOpacity: 0.1,
 
 																			marker: {
 
@@ -1076,7 +1119,7 @@ if (kpi_selected == "Session Utilization") {
 
 																		lineWidth: 2,
 
-																		color:'red',
+																		color:'#FF8C00',
 
 																		marker: {
 
@@ -1162,10 +1205,19 @@ if (kpi_selected == "Session Utilization") {
 						
 						$scope.config_charter["system_uptime"][unique_identifier_sysup] = {
 						
+																		options: {
 																		chart: {
-																		type: 'area'
+																		          backgroundColor: {
+																							linearGradient: [0, 0, 500, 500],
+																							stops: [
+																										[0, 'rgb(255, 255, 255)'],
+																										[1, 'rgb(75, 140, 75)']
+																									]
+																						},
+																					type: 'column',
+																					width:1200,
 																		},
-
+																	},
 																		title: {
 																		text: "System Uptime"
 																		},
@@ -1185,7 +1237,7 @@ if (kpi_selected == "Session Utilization") {
 																				//y: -3
 																			},
 																		//categories: [1418894316000,1418894376000,1418894436000,1418894496000,1418894556000,1418894616000,1418894676000],
-																		categories: [1418894316000],
+																		categories: [],
 																		labels : {
 																		formatter: function() {
 																			//var myDate = new Date();
@@ -1199,8 +1251,9 @@ if (kpi_selected == "Session Utilization") {
 
 																	yAxis: [{ // left y axis
 																		title: {
-																			text: text_type
+																			text: 'Uptime (%)'
 																		},
+																		max:100,
 																		labels: {
 																			align: 'left',
 																			x: 3,
@@ -1231,7 +1284,7 @@ if (kpi_selected == "Session Utilization") {
 																		floating: true,
 																		borderWidth: 0
 																	},
-
+/*
 																	tooltip: {
 																		shared: true,
 																		crosshairs: true
@@ -1245,14 +1298,29 @@ if (kpi_selected == "Session Utilization") {
 																			}
 																		}
 																	},
-
+																	*/
+																	
+																				tooltip: {
+																					headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+																					pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+																						'<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
+																					footerFormat: '</table>',
+																					shared: true,
+																					useHTML: true
+																				},
+																				plotOptions: {
+																					column: {
+																						pointPadding: 0.2,
+																						borderWidth: 1
+																					}
+																				},
 																	series: [{
 																		name: "Percent",
 																		//data: [[1330300800000,20], [1330300800000,37], [1330300800000,26], [1330300800000,8], [1330300800000,7]],
-																		data:[20],
+																		data:[],
 																		//data:[65],
 																		lineWidth: 2,
-																		color:'red',
+																		color:'#4CC417',
 																		marker: {
 																			radius: 4
 																		}

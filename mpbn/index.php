@@ -13,7 +13,8 @@
 		<table style="height: inherit;width: inherit;">
 			<tr height="5%">
 				<td class="layouvisible">
-					<img src="img/ERI_logo.png" style="height: 25px; width: 120px; margin-left: 20px;"/>
+					<img src="img\ERI_logo.png" style="height: 25px; width: 120px; margin-left: 20px;"/>
+
 				</td>
 				<td class="layouvisible">
 					&nbsp;
@@ -24,8 +25,8 @@
 				<td class="layouvisible" align="center" valign="top" style="padding-top: 50px;">	
 					<form action="login.php" method="post" accept-charset="utf-8" id="LoginSMART">
 					<div class="dialog">
-						<div class="topbar"><span class="logintext">Login</span></div><br>
-						<div class="imagebar"><img src="img/logo_san.png" />&nbsp;<img src="img/smart-logo.jpg" /></div>
+						<div class="topbar"><span class="logintext">NETMONITOR Login</span></div><br>
+						<div class="imagebar"><img src="img/logo_san.png" />&nbsp;</div>
 						<div class="content">
 							<table><tr><td>
 								<label for="login">Username</label>
